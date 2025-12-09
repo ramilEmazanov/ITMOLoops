@@ -1,40 +1,64 @@
+#pragma once
 #include <cstdint>
 #include <filesystem>
 #include <string>
 #include <vector>
 
+#include "effect.h"
+
 namespace fs = std::filesystem;
 
-// struct Effect {
-//   EffectType effect_type_;
-//   // kGain
-//   float gain_;
-//   // kEcho
-//   float delay_;
-//   float decay_;
-//   // kTremolo
-//   size_t freq_;
-//   float depth_;
-// };
-
+// Абстрактный класс
 class Instrument {
+ public:
+  virtual void PlaySound(uint32_t start, float pitch, uint32_t duration,
+                         uint8_t velocity) = 0;
+
+  virtual ~Instrument() = 0;
+
  private:
-  // Sample fields
-  fs::path sample_path_;
+  std::vector<Effect> effects_;
+};
+
+class SamplerInstrument : public Instrument {
+ public:
+  void PlaySound(uint32_t start, float pitch, uint32_t duration,
+                 uint8_t velocity) override;
+
+ private:
+  std::vector<float> samples;
   float root_note_;
   uint32_t loop_begin_ = 0;
   uint32_t loop_end_ = 0;
-  // Sample, Square, Sine, Triangle fields
+};
+
+class SquareInstrument : public Instrument {
+ public:
+  void PlaySound(uint32_t start, float pitch, uint32_t duration,
+                 uint8_t velocity) override;
+
+ private:
   uint8_t duty_ = 0;
   uint16_t attack_duration_ = 0;
   uint16_t release_duration_ = 0;
-  // std::vector<Effect> effects_;
+};
 
+class SineInstrument : public Instrument {
  public:
-  Instrument(fs::path sample_path, float root_note,
-             uint32_t loop_begin, uint32_t loop_end, uint8_t duty,
-             uint16_t attack_duration, uint16_t release_duration);
+  void PlaySound(uint32_t start, float pitch, uint32_t duration,
+                 uint8_t velocity) override;
 
-  // here we calculate value
-  size_t PlayNote(size_t start, size_t pitch, size_t duration, size_t velocity);
+ private:
+  uint16_t attack_duration_ = 0;
+  uint16_t release_duration_ = 0;
+};
+
+class TriangleInstrument : public Instrument {
+ public:
+  void PlaySound(uint32_t start, float pitch, uint32_t duration,
+                 uint8_t velocity) override;
+
+ private:
+  uint16_t attack_duration_ = 0;
+  uint16_t release_duration_ = 0;
 };
