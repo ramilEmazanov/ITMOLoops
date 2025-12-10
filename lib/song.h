@@ -9,14 +9,12 @@
 
 class Song {
  public:
-  Song(uint8_t bpm) : bpm_(bpm) {}
+  Song();
 
-  void MakeSong();
-
+  void AddInstrument(std::unique_ptr<Instrument> inst);
  private:
   uint8_t bpm_;
   uint8_t beat_ = bpm_ / 60;
-  std::vector<Instrument> instruments_;
-  // std::vector<> instruments_;
+  std::vector<std::unique_ptr<Instrument>> instruments_;
 
 };

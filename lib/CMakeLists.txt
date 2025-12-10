@@ -6,5 +6,7 @@ add_library(instrument instrument.cpp)
 add_library(pattern pattern.cpp)
 add_library(process process.cpp)
 add_library(song song.cpp)
+add_library(parser parser.cpp)
+
 
 target_include_directories(itmoloops_lib PUBLIC .)

@@ -1,7 +1,25 @@
 #include "instrument.h"
 
-void SamplerInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
-                                 uint8_t velocity) {
+Instrument::~Instrument() = default;
+
+SamplerInstrument::SamplerInstrument() = default;
+
+SamplerInstrument::~SamplerInstrument() = default;
+
+SquareInstrument::SquareInstrument() = default;
+
+SquareInstrument::~SquareInstrument() = default;
+
+SineInstrument::SineInstrument() = default;
+
+SineInstrument::~SineInstrument() = default;
+
+TriangleInstrument::TriangleInstrument() = default;
+
+TriangleInstrument::~TriangleInstrument() = default;
+
+void SamplerInstrument::PlaySound(uint32_t start, float pitch,
+                                  uint32_t duration, uint8_t velocity) {
   uint32_t start_unit = start;
   uint32_t duration_unit = duration;
   int bpm;
@@ -45,4 +63,27 @@ void SamplerInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration
 
   // return note_signals;
   return;
+}
+
+void SquareInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
+                                 uint8_t velocity) {}
+
+void SineInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
+                               uint8_t velocity) {}
+
+void TriangleInstrument::PlaySound(uint32_t start, float pitch,
+                                   uint32_t duration, uint8_t velocity) {}
+
+std::unique_ptr<Instrument> CreateInstrument(InstrumentType type) {
+  switch (type) {
+    case InstrumentType::kSampler:
+      return std::make_unique<SamplerInstrument>();
+    case InstrumentType::kSine:
+      return std::make_unique<SineInstrument>();
+    case InstrumentType::kSquare:
+      return std::make_unique<SquareInstrument>();
+    case InstrumentType::kTriangle:
+      return std::make_unique<TriangleInstrument>();
+  }
+  return nullptr;
 }
