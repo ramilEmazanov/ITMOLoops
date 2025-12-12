@@ -1,5 +1,7 @@
 #include "instrument.h"
 
+#include <iostream>
+
 Instrument::~Instrument() = default;
 
 SamplerInstrument::SamplerInstrument() = default;
@@ -18,6 +20,57 @@ TriangleInstrument::TriangleInstrument() = default;
 
 TriangleInstrument::~TriangleInstrument() = default;
 
+int Instrument::GetEffectsSize() {
+  return effects_.size();
+}
+
+
+void Instrument::AddEffect(std::unique_ptr<Effect> eff) {
+  effects_.push_back(std::move(eff));
+}
+
+void SamplerInstrument::GetPath() {
+  std::cout << "path : " << sample_path_ << '\n';
+}
+
+void SamplerInstrument::GetRootNote() {
+  std::cout << "root_note : " << root_note_ << '\n';
+}
+
+void SamplerInstrument::GetLoopBegin() {
+  std::cout << "loop_begin : " << loop_begin_ << '\n';
+}
+
+void SamplerInstrument::GetLoopEnd() {
+  std::cout << "loop_end : " << loop_end_ << '\n';
+}
+
+void SamplerInstrument::GetAttack() {
+  std::cout << "attack : " << attack_ << '\n';
+}
+
+void SamplerInstrument::GetRelease() {
+  std::cout << "release : " << release_ << '\n';
+}
+
+void SamplerInstrument::SetAttack(float attack) { attack_ = attack; }
+
+void SamplerInstrument::SetRelease(float release) { release_ = release; }
+
+void SamplerInstrument::SetPath(fs::path sample_path) {
+  sample_path_ = sample_path;
+}
+
+void SamplerInstrument::SetRoot(std::string root_note) {
+  float root_note_float = 0;
+  root_note_ = root_note_float;
+}
+
+void SamplerInstrument::SetLoop(uint32_t loop_begin, uint32_t loop_end) {
+  loop_begin_ = loop_begin;
+  loop_end_ = loop_end;
+}
+
 void SamplerInstrument::PlaySound(uint32_t start, float pitch,
                                   uint32_t duration, uint8_t velocity) {
   uint32_t start_unit = start;
@@ -26,7 +79,7 @@ void SamplerInstrument::PlaySound(uint32_t start, float pitch,
   int resolution;
 
   float new_note = pitch;
-  float root_note = root_note_;
+  float root_note = 1; /* root_note_ */
 
   // перевод одного юнита в секунду
   float unit_to_sec = 60.0f / (bpm * resolution);
@@ -51,14 +104,14 @@ void SamplerInstrument::PlaySound(uint32_t start, float pitch,
     int lower_ind = static_cast<int>(src_idx);
     int higher_ind = lower_ind + 1;
 
-    if (higher_ind >= static_cast<int>(samples.size())) {
+    if (higher_ind >= static_cast<int>(samples_.size())) {
       break;
     }
 
     float frc = src_idx - lower_ind;
 
     note_signals[i] =
-        samples[lower_ind] * (1 - frc) + samples[higher_ind] * frc;
+        samples_[lower_ind] * (1 - frc) + samples_[higher_ind] * frc;
   }
 
   // return note_signals;
@@ -74,16 +127,16 @@ void SineInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
 void TriangleInstrument::PlaySound(uint32_t start, float pitch,
                                    uint32_t duration, uint8_t velocity) {}
 
-std::unique_ptr<Instrument> CreateInstrument(InstrumentType type) {
-  switch (type) {
-    case InstrumentType::kSampler:
-      return std::make_unique<SamplerInstrument>();
-    case InstrumentType::kSine:
-      return std::make_unique<SineInstrument>();
-    case InstrumentType::kSquare:
-      return std::make_unique<SquareInstrument>();
-    case InstrumentType::kTriangle:
-      return std::make_unique<TriangleInstrument>();
-  }
-  return nullptr;
-}
+// std::unique_ptr<Instrument> CreateInstrument(InstrumentType type) {
+//   switch (type) {
+//     case InstrumentType::kSampler:
+//       return std::make_unique<SamplerInstrument>();
+//     case InstrumentType::kSine:
+//       return std::make_unique<SineInstrument>();
+//     case InstrumentType::kSquare:
+//       return std::make_unique<SquareInstrument>();
+//     case InstrumentType::kTriangle:
+//       return std::make_unique<TriangleInstrument>();
+//   }
+//   return nullptr;
+// }

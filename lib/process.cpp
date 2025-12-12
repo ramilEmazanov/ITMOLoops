@@ -14,4 +14,5 @@ void Run(std::string txt_path, std::string wav_path) {
   Song song;
   Parser parser;
   parser.Parse(song, in);
+  
 }

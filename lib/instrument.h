@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "effect.h"
 
@@ -10,7 +11,6 @@ namespace fs = std::filesystem;
 
 enum class InstrumentType { kSampler, kSquare, kSine, kTriangle };
 
-// Абстрактный класс
 class Instrument {
  public:
   virtual void PlaySound(uint32_t start, float pitch, uint32_t duration,
@@ -18,8 +18,12 @@ class Instrument {
 
   virtual ~Instrument() = 0;
 
- private:
-  std::vector<Effect> effects_;
+  void AddEffect(std::unique_ptr<Effect> eff);
+
+  int GetEffectsSize();
+
+ protected:
+  std::vector<std::unique_ptr<Effect>> effects_;
 };
 
 class SamplerInstrument : public Instrument {
@@ -31,12 +35,40 @@ class SamplerInstrument : public Instrument {
 
   ~SamplerInstrument();
 
+  void SetPath(fs::path sample_path);
+
+  void SetRoot(std::string root_note);
+
+  void SetLoop(uint32_t loop_begin, uint32_t loop_end);
+
+  void SetAttack(float attack);
+
+  void SetRelease(float attack);
+
+  void GetPath();
+
+  void GetRootNote();
+
+  void GetLoopBegin();
+
+  void GetLoopEnd();
+
+  void GetAttack();
+
+  void GetRelease();
+
+  GainEffect* GetGain() {
+    return dynamic_cast<GainEffect*>(effects_[0].get());
+  }
+
  private:
-  std::string name_;
+  fs::path sample_path_;
   std::vector<float> samples_;
   float root_note_;
   uint32_t loop_begin_ = 0;
   uint32_t loop_end_ = 0;
+  float attack_ = 0;
+  float release_ = 0;
 };
 
 class SquareInstrument : public Instrument {
@@ -81,15 +113,4 @@ class TriangleInstrument : public Instrument {
   uint16_t release_duration_ = 0;
 };
 
-std::unique_ptr<Instrument> CreateInstrument(InstrumentType type);
-
-class InstrumentParser {
- public:
-  virtual void ParseInstrument() = 0;
-
- private:
-};
-
-class SamplerParser : InstrumentParser {
-  
-};
+// std::unique_ptr<Instrument> CreateInstrument(InstrumentType type);
