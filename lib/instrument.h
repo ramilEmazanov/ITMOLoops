@@ -1,9 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <filesystem>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include "effect.h"
 
@@ -22,7 +22,17 @@ class Instrument {
 
   int GetEffectsSize();
 
+  virtual void GetFields() = 0;
+
+  void SetAttack(float attack);
+
+  void SetRelease(float release);
+
+  Effect* GetEffect(int n);
+
  protected:
+  float attack_ = 0;
+  float release_ = 0;
   std::vector<std::unique_ptr<Effect>> effects_;
 };
 
@@ -41,25 +51,9 @@ class SamplerInstrument : public Instrument {
 
   void SetLoop(uint32_t loop_begin, uint32_t loop_end);
 
-  void SetAttack(float attack);
+  void GetFields() override;
 
-  void SetRelease(float attack);
-
-  void GetPath();
-
-  void GetRootNote();
-
-  void GetLoopBegin();
-
-  void GetLoopEnd();
-
-  void GetAttack();
-
-  void GetRelease();
-
-  GainEffect* GetGain() {
-    return dynamic_cast<GainEffect*>(effects_[0].get());
-  }
+  GainEffect* GetGain() { return dynamic_cast<GainEffect*>(effects_[0].get()); }
 
  private:
   fs::path sample_path_;
@@ -67,8 +61,6 @@ class SamplerInstrument : public Instrument {
   float root_note_;
   uint32_t loop_begin_ = 0;
   uint32_t loop_end_ = 0;
-  float attack_ = 0;
-  float release_ = 0;
 };
 
 class SquareInstrument : public Instrument {
@@ -78,12 +70,14 @@ class SquareInstrument : public Instrument {
 
   SquareInstrument();
 
+  void GetFields() override;
+
   ~SquareInstrument();
 
+  void SetDuty(uint8_t duty);
+
  private:
-  uint8_t duty_ = 0;
-  uint16_t attack_duration_ = 0;
-  uint16_t release_duration_ = 0;
+  uint16_t duty_ = 0;
 };
 
 class SineInstrument : public Instrument {
@@ -92,6 +86,7 @@ class SineInstrument : public Instrument {
                  uint8_t velocity) override;
 
   SineInstrument();
+  void GetFields() override;
 
   ~SineInstrument();
 
@@ -106,11 +101,10 @@ class TriangleInstrument : public Instrument {
                  uint8_t velocity) override;
 
   TriangleInstrument();
-  ~TriangleInstrument();
 
- private:
-  uint16_t attack_duration_ = 0;
-  uint16_t release_duration_ = 0;
+  void GetFields() override;
+
+  ~TriangleInstrument();
 };
 
 // std::unique_ptr<Instrument> CreateInstrument(InstrumentType type);

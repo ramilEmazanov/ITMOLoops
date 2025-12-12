@@ -9,6 +9,8 @@ class Effect {
  public:
   virtual void ChangeSound() = 0;
 
+  virtual void GetFields();
+
   virtual ~Effect() = default;
 };
 
@@ -19,6 +21,8 @@ class GainEffect : public Effect {
   void SetGain(float gain);
 
   void GetGain();
+
+  void GetFields() override;
 
  private:
   float gain_;
@@ -31,6 +35,9 @@ class EchoEffect : public Effect {
   void SetDelay(float delay);
 
   void SetDecay(float decay);
+
+  void GetFields() override;
+
  private:
   float delay_;
   float decay_;
@@ -43,6 +50,9 @@ class TremoloEffect : public Effect {
   void SetFreq(uint32_t freq);
 
   void SetDepth(float depth);
+
+  void GetFields() override;
+
  private:
   uint32_t freq_;
   float depth_;

@@ -13,24 +13,23 @@ class Song {
  public:
   Song();
 
-  void AddInstrument(std::unique_ptr<Instrument> inst);
+  void AddInstrument(const std::string& name, std::unique_ptr<Instrument> inst);
 
   void SetBpm(uint16_t);
 
   void GetBpm();
 
-  Instrument* GetInstrument(int n);
+  const std::unordered_map<std::string, std::unique_ptr<Instrument>>&
+  GetInstruments() const;
 
   int GetInstrumentsSize();
 
+  void GetInstrumentsInfo();
+
  private:
   uint16_t bpm_;
-  // uint16_t beat_ = bpm_ / 60;
 
-  std::vector<std::unique_ptr<Instrument>> instruments_;
-  // std::vector<std::unique_ptr<Pattern>> patterns_;
-
-  std::unordered_map<std::string, Pattern> patterns_;
-  // std::unordered_map<std::string, Instrument> instruments_;
+  std::unordered_map<std::string, std::unique_ptr<Pattern>> patterns_;
+  std::unordered_map<std::string, std::unique_ptr<Instrument>> instruments_;
 
 };

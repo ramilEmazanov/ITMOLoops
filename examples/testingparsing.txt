@@ -1,0 +1,48 @@
+bpm 138
+
+instrument instr0 sampler
+    sample=./samples/kick.wav
+    root=C5
+end
+
+instrument instr1 sampler
+    sample=./samples/crash.wav
+    loop=6251,12556
+    release=0.25
+    root=C5
+    effect echo delay=0.2 decay=0.2
+end
+
+instrument instr2 sampler
+    sample=./samples/tamb.wav
+    root=C5
+    effect echo delay=0.2 decay=0.4
+end
+
+instrument instr3 square
+    duty=12
+    effect gain gain=0.2
+    attack=0.05
+    release=0.05
+end
+
+instrument instr4 square
+    duty=25
+    effect gain gain=0.2
+    attack=0.05
+    release=0.05
+end
+
+instrument sine1 sine
+    attack=0.05
+    release=0.05
+    effect gain gain=0.2
+    effect echo delay=0.4 decay=0.2
+end
+
+instrument instr6 triangle
+    attack=0.02
+    release=0.05
+    effect gain gain=1.5
+    effect echo delay=0.4 decay=0.2
+end

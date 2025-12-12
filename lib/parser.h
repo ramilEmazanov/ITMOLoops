@@ -10,6 +10,9 @@ class Parser {
  public:
   void Parse(Song& song, std::istream& in);
 
+  std::unique_ptr<Instrument> ParseInstrument(std::istream& in,
+                                              const std::string& header);
+
   std::unique_ptr<Instrument> ParseSampler(const std::string& name,
                                            std::istream& in);
 
@@ -22,10 +25,7 @@ class Parser {
   std::unique_ptr<Instrument> ParseTriangle(const std::string& name,
                                             std::istream& in);
 
-  std::unique_ptr<Instrument> ParseInstrument(std::istream& in,
-                                              const std::string& header);
-
-  void ParseSingleArguments(SamplerInstrument* sampler, std::string line);
+  void ParseEffect(std::unique_ptr<Instrument>& inst, std::string& line);
 
   void ParseGainEffect(GainEffect* gain_pointer, std::string gain_str);
 
@@ -34,7 +34,14 @@ class Parser {
 
   void ParseTremoloEffect(TremoloEffect* tremolo_pointer, std::string freq_str,
                           std::string depth_str);
-  void ParsePattern();
 
-  void ParseBpm();
+  void ParseSamplerArguments(SamplerInstrument* sampler, std::string line);
+
+  void ParseSquareArguments(SquareInstrument* square, std::string line);
+
+  void ParseTriangleArguments(TriangleInstrument* triangle, std::string line);
+
+  void ParseSineArguments(SineInstrument* sine, std::string line);
+
+  void ParsePattern();
 };

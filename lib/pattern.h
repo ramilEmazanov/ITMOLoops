@@ -28,5 +28,3 @@ class Pattern {
   std::vector<Note> notes_;
   std::vector<Pattern> patterns_;
 };
-
-class MainPattern {};  //???

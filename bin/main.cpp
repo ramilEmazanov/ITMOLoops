@@ -8,47 +8,36 @@ namespace fs = std::filesystem;
 
 int main(int argc, const char* argv[]) {
   fs::path txt_path = argv[1];
-  // std::string wav_path = argv[2];
-  // Run(txt_path, wav_path);
-  std::ifstream in(txt_path);
+  std::string wav_path = "";
+  Run(txt_path, wav_path);
+  // std::ifstream in(txt_path);
 
-  Song song;
-  Parser parser;
-  parser.Parse(song, in);
-  int instruments_size = song.GetInstrumentsSize();
-  song.GetBpm();
-  for (int i = 0; i < 1; ++i) {
-    SamplerInstrument* sampler =
-        dynamic_cast<SamplerInstrument*>(song.GetInstrument(i));
-        sampler->GetPath();
-    sampler->GetRootNote();
-    sampler->GetLoopBegin();
-    sampler->GetLoopEnd();
-    sampler->GetAttack();
-    sampler->GetRelease();
-    // int effects_size = sampler->GetEffectsSize();
 
-    // for(int j = 0; j < 1; ++j) {
-    //   GainEffect* gain_pointer = dynamic_cast<GainEffect*>(sampler->GetGain());
-    //   gain_pointer->GetGain();
-    // }
-    std::cout << '\n';
-  }
   return 0;
 }
 
-// std::string line;
-// while(std::getline(in, line)) {
-//   std::cout << line << '\n';
-// }
+//////////////////////
+// INSTRUMENT PARSING TEST
+// Song song;
+// Parser parser;
+// parser.Parse(song, in);
+// int instruments_size = song.GetInstrumentsSize();
+// song.GetBpm();
 
-// std::string text = R"(
-//   bpm 120
-//   instrument sax sampler
-//       sample=./samples/hihc.wav
-//       root=C5
-//       loop=10,20
-//       attack=0.01
-//       release=0.1
-//   end
-// )";
+// for (const auto& [name, inst_ptr] : song.GetInstruments()) {
+//   std::cout << "Instrument: " << name << '\n';
+
+//   Instrument* inst = inst_ptr.get();
+//   inst->GetFields();
+
+//   int effects_size = inst->GetEffectsSize();
+//   std::cout << "Effects:\n";
+
+//   for (int j = 0; j < effects_size; ++j) {
+//     Effect* eff = inst->GetEffect(j);
+//     eff->GetFields();
+//   }
+
+//   std::cout << '\n';
+// }
+/////////////////////////
