@@ -45,9 +45,9 @@ class Parser {
 
   std::unique_ptr<Pattern> ParsePattern(std::istream& in, std::string line);
 
-  void ReadNotes();
+  void ReadNotesFromFile();
 
-  void GetNotes();
+  void PrintNotes() const;
 
  private:
   fs::path notes_path_ = "../notes.txt";

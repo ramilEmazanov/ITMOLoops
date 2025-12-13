@@ -5,29 +5,40 @@
 #include <string>
 #include <vector>
 
+enum class EventKind { kPattern, kNote };
+
 class Event {
  public:
   virtual ~Event() = default;
+  virtual void PrintFields() = 0;
+  virtual EventKind GetEventKind() = 0;
 
   void SetStart(uint32_t start);
+  uint32_t GetStart() const;
 
-  virtual void GetFields() = 0;
-
-protected:
+ protected:
   uint32_t start_;
 };
 
 class NoteEvent : public Event {
  public:
-  void SetInstrumentName(std::string name);
-  void SetPitch(std::string pitch);
+  void SetInstrumentName(const std::string& name);
+  void SetPitch(float pitch);
   void SetDuration(uint32_t duration);
   void SetVelocity(uint32_t velocity);
-  
-  void GetFields();
+
+  void PrintFields();
+
+  const std::string& GetInstrumentName();
+  float GetPitch();
+  uint32_t GetDuration();
+  uint32_t GetVelocity();
+
+  EventKind GetEventKind();
+
  private:
   std::string instrument_name_;
-  std::string pitch_;
+  float pitch_;
   uint32_t duration_;
   uint32_t velocity_;
 };
@@ -36,7 +47,11 @@ class PatternEvent : public Event {
  public:
   void SetPatternName(std::string name);
 
-  void GetFields();
+  void PrintFields();
+
+  EventKind GetEventKind();
+
+  std::string& GetPatternName();
 
  private:
   std::string pattern_name_;
@@ -46,36 +61,15 @@ class Pattern {
  public:
   void AddEvent(std::unique_ptr<Event> event);
 
+  void SetResolution(uint32_t);
+
+  uint32_t GetResolution();
+
   int GetEventsSize();
 
   Event* GetEvent(int n);
 
  private:
   std::vector<std::unique_ptr<Event>> events_;
+  uint32_t resolution_;
 };
-
-// struct Note {
-//  private:
-//   size_t start_;
-//   std::string instrument_;
-//   std::string pitch_;
-//   size_t duration_;
-//   size_t velocity_;
-
-//  public:
-//   Note(size_t start, std::string instrument, std::string pitch, size_t
-//   duration,
-//        size_t velocity);
-//   // : start_(start),
-//   //   instrument_(instrument),
-//   //   pitch_(pitch),
-//   //   duration_(duration),
-//   //   velocity_(velocity) {}
-// };
-
-// class Pattern {
-//  private:
-//   size_t resolution;
-//   std::vector<Note> notes_;
-//   std::vector<Pattern> patterns_;
-// };

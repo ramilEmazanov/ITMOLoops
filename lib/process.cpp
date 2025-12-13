@@ -16,5 +16,9 @@ void Run(std::string txt_path, std::string wav_path) {
   parser.Parse(song, in);
   // song.GetInstrumentsInfo();
   // song.GetPatterns();
+  song.ExpandMain();
+  song.SortNoteCalls();
+  song.GetDuration();
+  // song.PrintNoteCalls();
   // song.GetPatternsSize();
 }

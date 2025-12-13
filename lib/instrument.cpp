@@ -57,7 +57,7 @@ void Instrument::SetAttack(float attack) { attack_ = attack; }
 
 void Instrument::SetRelease(float release) { release_ = release; }
 
-void SquareInstrument::SetDuty(uint8_t duty) { duty_ = duty; }
+void SquareInstrument::SetDuty(uint32_t duty) { duty_ = duty; }
 
 void SamplerInstrument::SetPath(fs::path sample_path) {
   sample_path_ = sample_path;
@@ -73,7 +73,7 @@ void SamplerInstrument::SetLoop(uint32_t loop_begin, uint32_t loop_end) {
 }
 
 void SamplerInstrument::PlaySound(uint32_t start, float pitch,
-                                  uint32_t duration, uint8_t velocity) {
+                                  uint32_t duration, uint32_t velocity) {
   uint32_t start_unit = start;
   uint32_t duration_unit = duration;
   int bpm;
@@ -120,10 +120,10 @@ void SamplerInstrument::PlaySound(uint32_t start, float pitch,
 }
 
 void SquareInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
-                                 uint8_t velocity) {}
+                                 uint32_t velocity) {}
 
 void SineInstrument::PlaySound(uint32_t start, float pitch, uint32_t duration,
-                               uint8_t velocity) {}
+                               uint32_t velocity) {}
 
 void TriangleInstrument::PlaySound(uint32_t start, float pitch,
-                                   uint32_t duration, uint8_t velocity) {}
+                                   uint32_t duration, uint32_t velocity) {}

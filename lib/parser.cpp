@@ -23,7 +23,7 @@ bool StartsWith(const std::string& compared, const std::string& prefix) {
 using namespace detail;
 
 void Parser::Parse(Song& song, std::istream& in) {
-  ReadNotes();
+  ReadNotesFromFile();
   std::string line;
   while (std::getline(in, line)) {
     size_t start = line.find_first_not_of(" ");
@@ -291,7 +291,6 @@ std::unique_ptr<Pattern> Parser::ParsePattern(std::istream& in,
   std::string name;
   std::string resolution;
   ss >> name >> name >> resolution >> resolution;
-  // std::cout << name << " " << resolution << '\n';
   while (std::getline(in, line)) {
     size_t start = line.find_first_not_of(" ");
     if (start == std::string::npos) continue;
@@ -301,6 +300,7 @@ std::unique_ptr<Pattern> Parser::ParsePattern(std::istream& in,
     std::string event_start, event_name;
     event >> event_start >> event_name;
     uint32_t start_int = std::stoi(event_start);
+    uint32_t resolution_int = std::stoi(resolution);
     if (event_name[0] == '@') {
       std::unique_ptr<PatternEvent> pattern_event =
           std::make_unique<PatternEvent>();
@@ -308,27 +308,28 @@ std::unique_ptr<Pattern> Parser::ParsePattern(std::istream& in,
       event_name = event_name.substr(1);
       pattern_event->SetPatternName(event_name);
       new_pattern->AddEvent(std::move(pattern_event));
-      // std::cout << start_int << " " << event_name << '\n';
+      new_pattern->SetResolution(resolution_int);
     } else {
       std::unique_ptr<NoteEvent> note_event = std::make_unique<NoteEvent>();
       std::string instrument_name, pitch_str, duration_str, velocity_str;
       instrument_name = event_name;
       event >> pitch_str >> duration_str >> velocity_str;
-      // float pitch = std::stof(pitch_str);
       uint32_t duration = std::stoi(duration_str);
       uint32_t velocity = std::stoi(velocity_str);
+      float pitch = notes_[pitch_str];
       note_event->SetStart(start_int);
       note_event->SetInstrumentName(instrument_name);
-      note_event->SetPitch(pitch_str);
+      note_event->SetPitch(pitch);
       note_event->SetDuration(duration);
       note_event->SetVelocity(velocity);
       new_pattern->AddEvent(std::move(note_event));
+      new_pattern->SetResolution(resolution_int);
     }
   }
   return new_pattern;
 }
 
-void Parser::ReadNotes() {
+void Parser::ReadNotesFromFile() {
   std::ifstream in(notes_path_);
   std::string line;
   while (std::getline(in, line)) {
@@ -340,7 +341,7 @@ void Parser::ReadNotes() {
   }
 }
 
-void Parser::GetNotes() {
+void Parser::PrintNotes() const {
   for (const auto& [name, note] : notes_) {
     std::cout << name << " " << note << '\n';
   }

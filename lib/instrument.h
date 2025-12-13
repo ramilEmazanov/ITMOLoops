@@ -14,7 +14,7 @@ enum class InstrumentType { kSampler, kSquare, kSine, kTriangle };
 class Instrument {
  public:
   virtual void PlaySound(uint32_t start, float pitch, uint32_t duration,
-                         uint8_t velocity) = 0;
+                         uint32_t velocity) = 0;
 
   virtual ~Instrument() = 0;
 
@@ -34,12 +34,13 @@ class Instrument {
   float attack_ = 0;
   float release_ = 0;
   std::vector<std::unique_ptr<Effect>> effects_;
+  std::vector<float> samples_;
 };
 
 class SamplerInstrument : public Instrument {
  public:
   void PlaySound(uint32_t start, float pitch, uint32_t duration,
-                 uint8_t velocity) override;
+                 uint32_t velocity) override;
 
   SamplerInstrument();
 
@@ -66,7 +67,7 @@ class SamplerInstrument : public Instrument {
 class SquareInstrument : public Instrument {
  public:
   void PlaySound(uint32_t start, float pitch, uint32_t duration,
-                 uint8_t velocity) override;
+                 uint32_t velocity) override;
 
   SquareInstrument();
 
@@ -74,16 +75,16 @@ class SquareInstrument : public Instrument {
 
   ~SquareInstrument();
 
-  void SetDuty(uint8_t duty);
+  void SetDuty(uint32_t duty);
 
  private:
-  uint16_t duty_ = 0;
+  uint32_t duty_ = 0;
 };
 
 class SineInstrument : public Instrument {
  public:
   void PlaySound(uint32_t start, float pitch, uint32_t duration,
-                 uint8_t velocity) override;
+                 uint32_t velocity) override;
 
   SineInstrument();
   void GetFields() override;
@@ -91,14 +92,14 @@ class SineInstrument : public Instrument {
   ~SineInstrument();
 
  private:
-  uint16_t attack_duration_ = 0;
-  uint16_t release_duration_ = 0;
+  uint32_t attack_duration_ = 0;
+  uint32_t release_duration_ = 0;
 };
 
 class TriangleInstrument : public Instrument {
  public:
   void PlaySound(uint32_t start, float pitch, uint32_t duration,
-                 uint8_t velocity) override;
+                 uint32_t velocity) override;
 
   TriangleInstrument();
 
@@ -106,5 +107,3 @@ class TriangleInstrument : public Instrument {
 
   ~TriangleInstrument();
 };
-
-// std::unique_ptr<Instrument> CreateInstrument(InstrumentType type);
