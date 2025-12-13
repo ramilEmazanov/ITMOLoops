@@ -44,4 +44,12 @@ class Parser {
   void ParseSineArguments(SineInstrument* sine, std::string line);
 
   std::unique_ptr<Pattern> ParsePattern(std::istream& in, std::string line);
+
+  void ReadNotes();
+
+  void GetNotes();
+
+ private:
+  fs::path notes_path_ = "../notes.txt";
+  std::unordered_map<std::string, float> notes_;
 };

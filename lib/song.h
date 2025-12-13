@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <iostream>
 #include <unordered_map>
 
@@ -8,6 +9,8 @@
 #include "instrument.h"
 #include "pattern.h"
 #include "process.h"
+
+namespace fs = std::filesystem;
 
 class Song {
  public:
@@ -32,9 +35,12 @@ class Song {
 
   void GetPatterns();
 
+  void ReadNotes();
+
+  void GetNotes();
+
  private:
   uint16_t bpm_;
-
   std::unordered_map<std::string, std::unique_ptr<Pattern>> patterns_;
   std::unordered_map<std::string, std::unique_ptr<Instrument>> instruments_;
 };

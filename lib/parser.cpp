@@ -23,6 +23,7 @@ bool StartsWith(const std::string& compared, const std::string& prefix) {
 using namespace detail;
 
 void Parser::Parse(Song& song, std::istream& in) {
+  ReadNotes();
   std::string line;
   while (std::getline(in, line)) {
     size_t start = line.find_first_not_of(" ");
@@ -210,13 +211,14 @@ void Parser::ParseTremoloEffect(TremoloEffect* tremolo_pointer,
 
 void Parser::ParseSamplerArguments(SamplerInstrument* sampler,
                                    std::string line) {
-  std::string sample_path, root, loop_begin_str, loop_end_str, attack_str,
+  std::string sample_path, root_str, loop_begin_str, loop_end_str, attack_str,
       release_str;
   if (StartsWith(line, "sample")) {
     sample_path = line.substr(line.find("=") + 1);
     sampler->SetPath(sample_path);
   } else if (StartsWith(line, "root")) {
-    root = line.substr(line.find("=") + 1);
+    root_str = line.substr(line.find("=") + 1);
+    float root = notes_[root_str];
     sampler->SetRoot(root);
   } else if (StartsWith(line, "loop")) {
     size_t equal_pos = line.find('=');
@@ -324,6 +326,24 @@ std::unique_ptr<Pattern> Parser::ParsePattern(std::istream& in,
     }
   }
   return new_pattern;
+}
+
+void Parser::ReadNotes() {
+  std::ifstream in(notes_path_);
+  std::string line;
+  while (std::getline(in, line)) {
+    std::stringstream ss(line);
+    std::string note, value_str;
+    ss >> note >> value_str;
+    float value = std::stof(value_str);
+    notes_.emplace(note, value);
+  }
+}
+
+void Parser::GetNotes() {
+  for (const auto& [name, note] : notes_) {
+    std::cout << name << " " << note << '\n';
+  }
 }
 
 /*

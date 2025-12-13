@@ -56,7 +56,7 @@ void Song::GetPatternsSize() { std::cout << patterns_.size() << '\n'; }
 void Song::GetPatterns() {
   for (const auto& [name, patterns_ptr] : patterns_) {
     std::cout << "Pattern: " << name << '\n';
-    for(int i = 0; i < patterns_ptr->GetEventsSize(); ++i) {
+    for (int i = 0; i < patterns_ptr->GetEventsSize(); ++i) {
       Event* now = patterns_ptr->GetEvent(i);
       now->GetFields();
     }

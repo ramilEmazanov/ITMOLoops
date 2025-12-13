@@ -47,7 +47,7 @@ class SamplerInstrument : public Instrument {
 
   void SetPath(fs::path sample_path);
 
-  void SetRoot(std::string root_note);
+  void SetRoot(float root_note);
 
   void SetLoop(uint32_t loop_begin, uint32_t loop_end);
 

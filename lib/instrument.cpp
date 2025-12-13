@@ -63,9 +63,8 @@ void SamplerInstrument::SetPath(fs::path sample_path) {
   sample_path_ = sample_path;
 }
 
-void SamplerInstrument::SetRoot(std::string root_note) {
-  float root_note_float = 0;
-  root_note_ = root_note_float;
+void SamplerInstrument::SetRoot(float root_note) {
+  root_note_ = root_note;
 }
 
 void SamplerInstrument::SetLoop(uint32_t loop_begin, uint32_t loop_end) {
