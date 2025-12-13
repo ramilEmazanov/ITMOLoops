@@ -46,7 +46,10 @@ void Parser::Parse(Song& song, std::istream& in) {
       ss >> name;
       song.AddInstrument(name, std::move(inst));
     } else if (data_type == "pattern") {
-      Parser::ParsePattern();
+      std::string name;
+      ss >> name;
+      std::unique_ptr<Pattern> pattern = Parser::ParsePattern(in, line);
+      song.AddPattern(name, std::move(pattern));
     }
   }
 }
@@ -77,10 +80,10 @@ std::unique_ptr<Instrument> Parser::ParseSampler(const std::string& name,
 
   std::string line;
   while (std::getline(in, line)) {
-    if (line == "end") break;
     size_t start = line.find_first_not_of(" ");
     if (start == std::string::npos) continue;
     line.erase(0, start);
+    if (line == "end") break;
     if (StartsWith(line, "effect")) {
       ParseEffect(inst, line);
     } else {
@@ -97,10 +100,10 @@ std::unique_ptr<Instrument> Parser::ParseSquare(const std::string& name,
 
   std::string line;
   while (std::getline(in, line)) {
-    if (line == "end") break;
     size_t start = line.find_first_not_of(" ");
     if (start == std::string::npos) continue;
     line.erase(0, start);
+    if (line == "end") break;
     if (StartsWith(line, "effect")) {
       ParseEffect(inst, line);
     } else {
@@ -117,10 +120,10 @@ std::unique_ptr<Instrument> Parser::ParseTriangle(const std::string& name,
 
   std::string line;
   while (std::getline(in, line)) {
-    if (line == "end") break;
     size_t start = line.find_first_not_of(" ");
     if (start == std::string::npos) continue;
     line.erase(0, start);
+    if (line == "end") break;
     if (StartsWith(line, "effect")) {
       ParseEffect(inst, line);
     } else {
@@ -137,10 +140,10 @@ std::unique_ptr<Instrument> Parser::ParseSine(const std::string& name,
 
   std::string line;
   while (std::getline(in, line)) {
-    if (line == "end") break;
     size_t start = line.find_first_not_of(" ");
     if (start == std::string::npos) continue;
     line.erase(0, start);
+    if (line == "end") break;
 
     if (StartsWith(line, "effect")) {
       ParseEffect(inst, line);
@@ -278,7 +281,50 @@ void Parser::ParseSineArguments(SineInstrument* sine, std::string line) {
   }
 }
 
-void Parser::ParsePattern() {}
+std::unique_ptr<Pattern> Parser::ParsePattern(std::istream& in,
+                                              std::string line) {
+  std::unique_ptr<Pattern> new_pattern = std::make_unique<Pattern>();
+
+  std::stringstream ss(line);
+  std::string name;
+  std::string resolution;
+  ss >> name >> name >> resolution >> resolution;
+  // std::cout << name << " " << resolution << '\n';
+  while (std::getline(in, line)) {
+    size_t start = line.find_first_not_of(" ");
+    if (start == std::string::npos) continue;
+    line.erase(0, start);
+    if (line == "end") break;
+    std::stringstream event(line);
+    std::string event_start, event_name;
+    event >> event_start >> event_name;
+    uint32_t start_int = std::stoi(event_start);
+    if (event_name[0] == '@') {
+      std::unique_ptr<PatternEvent> pattern_event =
+          std::make_unique<PatternEvent>();
+      pattern_event->SetStart(start_int);
+      event_name = event_name.substr(1);
+      pattern_event->SetPatternName(event_name);
+      new_pattern->AddEvent(std::move(pattern_event));
+      // std::cout << start_int << " " << event_name << '\n';
+    } else {
+      std::unique_ptr<NoteEvent> note_event = std::make_unique<NoteEvent>();
+      std::string instrument_name, pitch_str, duration_str, velocity_str;
+      instrument_name = event_name;
+      event >> pitch_str >> duration_str >> velocity_str;
+      // float pitch = std::stof(pitch_str);
+      uint32_t duration = std::stoi(duration_str);
+      uint32_t velocity = std::stoi(velocity_str);
+      note_event->SetStart(start_int);
+      note_event->SetInstrumentName(instrument_name);
+      note_event->SetPitch(pitch_str);
+      note_event->SetDuration(duration);
+      note_event->SetVelocity(velocity);
+      new_pattern->AddEvent(std::move(note_event));
+    }
+  }
+  return new_pattern;
+}
 
 /*
 1. Вызывается Parse. Он идет по строкам и если видит что-то что

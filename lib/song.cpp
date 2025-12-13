@@ -17,6 +17,11 @@ void Song::AddInstrument(const std::string& name,
   instruments_.emplace(name, std::move(inst));
 }
 
+void Song::AddPattern(const std::string& name,
+                      std::unique_ptr<Pattern> pattern) {
+  patterns_.emplace(name, std::move(pattern));
+}
+
 const std::unordered_map<std::string, std::unique_ptr<Instrument>>&
 Song::GetInstruments() const {
   return instruments_;
@@ -42,6 +47,19 @@ void Song::GetInstrumentsInfo() {
       eff->GetFields();
     }
 
+    std::cout << '\n';
+  }
+}
+
+void Song::GetPatternsSize() { std::cout << patterns_.size() << '\n'; }
+
+void Song::GetPatterns() {
+  for (const auto& [name, patterns_ptr] : patterns_) {
+    std::cout << "Pattern: " << name << '\n';
+    for(int i = 0; i < patterns_ptr->GetEventsSize(); ++i) {
+      Event* now = patterns_ptr->GetEvent(i);
+      now->GetFields();
+    }
     std::cout << '\n';
   }
 }

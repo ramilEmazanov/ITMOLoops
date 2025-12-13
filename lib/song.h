@@ -15,6 +15,8 @@ class Song {
 
   void AddInstrument(const std::string& name, std::unique_ptr<Instrument> inst);
 
+  void AddPattern(const std::string& name, std::unique_ptr<Pattern> pattern);
+
   void SetBpm(uint16_t);
 
   void GetBpm();
@@ -26,10 +28,13 @@ class Song {
 
   void GetInstrumentsInfo();
 
+  void GetPatternsSize();
+
+  void GetPatterns();
+
  private:
   uint16_t bpm_;
 
   std::unordered_map<std::string, std::unique_ptr<Pattern>> patterns_;
   std::unordered_map<std::string, std::unique_ptr<Instrument>> instruments_;
-
 };

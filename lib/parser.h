@@ -43,5 +43,5 @@ class Parser {
 
   void ParseSineArguments(SineInstrument* sine, std::string line);
 
-  void ParsePattern();
+  std::unique_ptr<Pattern> ParsePattern(std::istream& in, std::string line);
 };
