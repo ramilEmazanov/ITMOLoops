@@ -34,7 +34,6 @@ class Instrument {
   float attack_ = 0;
   float release_ = 0;
   std::vector<std::unique_ptr<Effect>> effects_;
-  std::vector<float> samples_;
 };
 
 class SamplerInstrument : public Instrument {
@@ -54,11 +53,16 @@ class SamplerInstrument : public Instrument {
 
   void GetFields() override;
 
+  fs::path GetPath();
+  std::vector<float>& GetBuffer();
+
+  void PrintSamples();
+
   GainEffect* GetGain() { return dynamic_cast<GainEffect*>(effects_[0].get()); }
 
  private:
-  fs::path sample_path_;
   std::vector<float> samples_;
+  fs::path sample_path_;
   float root_note_;
   uint32_t loop_begin_ = 0;
   uint32_t loop_end_ = 0;

@@ -49,6 +49,14 @@ class Parser {
 
   void PrintNotes() const;
 
+  uint16_t Read16tNumber(std::istream& in);
+
+  int16_t ReadSample(std::istream& in);
+
+  float ExtractFloatSample(std::istream& in);
+
+  void ExtractSamples(std::istream& in, std::vector<float>& samples);
+  
  private:
   fs::path notes_path_ = "../notes.txt";
   std::unordered_map<std::string, float> notes_;

@@ -63,9 +63,17 @@ void SamplerInstrument::SetPath(fs::path sample_path) {
   sample_path_ = sample_path;
 }
 
-void SamplerInstrument::SetRoot(float root_note) {
-  root_note_ = root_note;
+void SamplerInstrument::PrintSamples() {
+  for (int i = 0; i < samples_.size(); ++i) {
+    std::cout << samples_[i] << '\n';
+  }
 }
+
+fs::path SamplerInstrument::GetPath() { return sample_path_; }
+
+std::vector<float>& SamplerInstrument::GetBuffer() { return samples_; }
+
+void SamplerInstrument::SetRoot(float root_note) { root_note_ = root_note; }
 
 void SamplerInstrument::SetLoop(uint32_t loop_begin, uint32_t loop_end) {
   loop_begin_ = loop_begin;

@@ -19,6 +19,7 @@ void Run(std::string txt_path, std::string wav_path) {
   song.ExpandMain();
   song.SortNoteCalls();
   song.GetDuration();
+  song.RenderSong();
   // song.PrintNoteCalls();
   // song.GetPatternsSize();
 }

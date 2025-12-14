@@ -63,7 +63,9 @@ class Song {
   void GetDuration();
   void GetNotes();
   void GetBpm();
-  uint32_t GetInstrumentBufferLength(const std::string& name);
+  uint32_t FindInstrumentBufferLength(const std::string& name);
+  uint32_t FindSongDuration();
+  void ExtractSamplersSamples();
 
   void RenderSong();
 

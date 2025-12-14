@@ -7,7 +7,8 @@
 #include "pattern.h"
 #include "process.h"
 
-uint32_t Song::GetInstrumentBufferLength(const std::string& name) {
+// Calculates the latest ending of a note -> it is buffer length
+uint32_t Song::FindInstrumentBufferLength(const std::string& name) {
   uint32_t instrument_buffer_len = 0;
   for (int i = 0; i < note_calls_.size(); ++i) {
     Note& note = note_calls_[i];
@@ -20,15 +21,26 @@ uint32_t Song::GetInstrumentBufferLength(const std::string& name) {
   return instrument_buffer_len;
 }
 
+uint32_t Song::FindSongDuration() {
+  uint32_t ans = 0;
+  for (const auto& [name, inst_ptr] : instruments_) {
+    uint32_t temp = FindInstrumentBufferLength(name);
+    ans = std::max(ans, temp);
+  }
+  return ans;
+}
+
 void Song::RenderSong() {
+  // std::vector<float> Song
   for (const auto& [name, inst_ptr] : instruments_) {
     Instrument* inst = inst_ptr.get();
-    uint32_t buffer_length = GetInstrumentBufferLength(name);
+    uint32_t buffer_length = FindInstrumentBufferLength(name);
     std::vector<float> instrument_sounds(buffer_length);
 
     for (int i = 0; i < note_calls_.size(); ++i) {
       const std::string& instrument_name = note_calls_[i].GetInstrumentName();
       if (name == instrument_name) {
+        // std::cout << name << '\n';
         // inst.RenderSound();
       }
     }

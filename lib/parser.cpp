@@ -91,6 +91,12 @@ std::unique_ptr<Instrument> Parser::ParseSampler(const std::string& name,
       ParseSamplerArguments(sampler, line);
     }
   }
+  fs::path temp = sampler->GetPath();
+  std::string filename = temp.filename().string();
+  fs::path sample_path = fs::path("../samples") / filename;
+  std::ifstream sample_file(sample_path, std::ios::binary);
+  
+  ExtractSamples(sample_file, sampler->GetBuffer());
   return inst;
 }
 
@@ -345,6 +351,40 @@ void Parser::PrintNotes() const {
   for (const auto& [name, note] : notes_) {
     std::cout << name << " " << note << '\n';
   }
+}
+
+uint16_t Parser::Read16tNumber(std::istream& in) {
+  uint16_t ans = 0;
+  for (int i = 0; i < 2; ++i) {
+    char reading = 0;
+    in.get(reading);
+    uint16_t temp = static_cast<uint8_t>(reading);
+    temp <<= (8 * i);
+    ans += temp;
+  }
+  return ans;
+}
+
+int16_t Parser::ReadSample(std::istream& in) {
+  uint16_t temp = Read16tNumber(in);
+  return static_cast<int16_t>(temp);
+}
+
+float Parser::ExtractFloatSample(std::istream& in) {
+  float sample = ReadSample(in) / 32768.0f;
+  return sample;
+}
+
+void Parser::ExtractSamples(std::istream& in, std::vector<float>& samples) {
+  in.seekg(44, std::ios::beg);
+  while (true) {
+    float sample = ExtractFloatSample(in);
+    if (!in) {
+      break;
+    }
+    samples.push_back(sample);
+  }
+  return;
 }
 
 /*
