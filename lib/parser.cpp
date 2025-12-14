@@ -6,9 +6,11 @@
 #include <sstream>
 #include <string>
 
-namespace fs = std::filesystem;
-
 #include "song.h"
+
+constexpr uint32_t kSampleRate = 44100;
+
+namespace fs = std::filesystem;
 
 namespace detail {
 
@@ -22,7 +24,8 @@ bool StartsWith(const std::string& compared, const std::string& prefix) {
 
 using namespace detail;
 
-void Parser::Parse(Song& song, std::istream& in) {
+void Parser::Parse(Song& song, std::string& txt_path) {
+  std::ifstream in(txt_path, std::ios::binary);
   ReadNotesFromFile();
   std::string line;
   while (std::getline(in, line)) {
@@ -95,7 +98,7 @@ std::unique_ptr<Instrument> Parser::ParseSampler(const std::string& name,
   std::string filename = temp.filename().string();
   fs::path sample_path = fs::path("../samples") / filename;
   std::ifstream sample_file(sample_path, std::ios::binary);
-  
+
   ExtractSamples(sample_file, sampler->GetBuffer());
   return inst;
 }
@@ -237,11 +240,13 @@ void Parser::ParseSamplerArguments(SamplerInstrument* sampler,
   } else if (StartsWith(line, "attack")) {
     attack_str = line.substr(line.find('=') + 1);
     float attack = std::stof(attack_str);
-    sampler->SetAttack(attack);
+    uint32_t attack_samples = static_cast<uint32_t>(attack * kSampleRate);
+    sampler->SetAttack(attack_samples);
   } else if (StartsWith(line, "release")) {
     release_str = line.substr(line.find('=') + 1);
     float release = std::stof(release_str);
-    sampler->SetRelease(release);
+    uint32_t release_samples = static_cast<uint32_t>(release * kSampleRate);
+    sampler->SetRelease(release_samples);
   }
 }
 
@@ -250,11 +255,13 @@ void Parser::ParseSquareArguments(SquareInstrument* square, std::string line) {
   if (StartsWith(line, "attack")) {
     attack_str = line.substr(line.find('=') + 1);
     float attack = std::stof(attack_str);
-    square->SetAttack(attack);
+    uint32_t attack_samples = static_cast<uint32_t>(attack * kSampleRate);
+    square->SetAttack(attack_samples);
   } else if (StartsWith(line, "release")) {
     release_str = line.substr(line.find('=') + 1);
     float release = std::stof(release_str);
-    square->SetRelease(release);
+    uint32_t release_samples = static_cast<uint32_t>(release * kSampleRate);
+    square->SetRelease(release_samples);
   } else if (StartsWith(line, "duty")) {
     duty_str = line.substr(line.find('=') + 1);
     uint16_t duty = std::stoi(duty_str);
@@ -268,11 +275,13 @@ void Parser::ParseTriangleArguments(TriangleInstrument* triangle,
   if (StartsWith(line, "attack")) {
     attack_str = line.substr(line.find('=') + 1);
     float attack = std::stof(attack_str);
-    triangle->SetAttack(attack);
+    uint32_t attack_samples = static_cast<uint32_t>(attack * kSampleRate);
+    triangle->SetAttack(attack_samples);
   } else if (StartsWith(line, "release")) {
     release_str = line.substr(line.find('=') + 1);
     float release = std::stof(release_str);
-    triangle->SetRelease(release);
+    uint32_t release_samples = static_cast<uint32_t>(release * kSampleRate);
+    triangle->SetRelease(release_samples);
   }
 }
 
@@ -281,11 +290,13 @@ void Parser::ParseSineArguments(SineInstrument* sine, std::string line) {
   if (StartsWith(line, "attack")) {
     attack_str = line.substr(line.find('=') + 1);
     float attack = std::stof(attack_str);
-    sine->SetAttack(attack);
+    uint32_t attack_samples = static_cast<uint32_t>(attack * kSampleRate);
+    sine->SetAttack(attack_samples);
   } else if (StartsWith(line, "release")) {
     release_str = line.substr(line.find('=') + 1);
     float release = std::stof(release_str);
-    sine->SetRelease(release);
+    uint32_t release_samples = static_cast<uint32_t>(release * kSampleRate);
+    sine->SetRelease(release_samples);
   }
 }
 
@@ -347,12 +358,6 @@ void Parser::ReadNotesFromFile() {
   }
 }
 
-void Parser::PrintNotes() const {
-  for (const auto& [name, note] : notes_) {
-    std::cout << name << " " << note << '\n';
-  }
-}
-
 uint16_t Parser::Read16tNumber(std::istream& in) {
   uint16_t ans = 0;
   for (int i = 0; i < 2; ++i) {
@@ -386,15 +391,3 @@ void Parser::ExtractSamples(std::istream& in, std::vector<float>& samples) {
   }
   return;
 }
-
-/*
-1. Вызывается Parse. Он идет по строкам и если видит что-то что
-instrument/bpm/pattern - вызывает ParseInstrument, создает объект и добавляет
-ссылку на него в вектор указателей
-2. В ParseInstrument выясняется, что за инструмент. Выызвается соответствующий
-парсер
-3. В ParseSample создается объект. Возвращается на него ссылка и в нем же
-заполняются поля. В ParseSample вызывается ParseSamplerArguments - парсер его
-уникальных полей. А также есть блок кода с парсингом эффектов
-4. В
-*/

@@ -10,16 +10,8 @@
 #include "song.h"
 
 void Run(std::string txt_path, std::string wav_path) {
-  std::ifstream in(txt_path, std::ios::binary);
   Song song;
   Parser parser;
-  parser.Parse(song, in);
-  // song.GetInstrumentsInfo();
-  // song.GetPatterns();
-  song.ExpandMain();
-  song.SortNoteCalls();
-  song.GetDuration();
-  song.RenderSong();
-  // song.PrintNoteCalls();
-  // song.GetPatternsSize();
+  parser.Parse(song, txt_path);
+  song.RenderSong(wav_path);
 }

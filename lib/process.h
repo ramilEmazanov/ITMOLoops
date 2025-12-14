@@ -11,4 +11,3 @@
 #include "pattern.h"
 
 void Run(std::string txt_path, std::string wav_path);
-

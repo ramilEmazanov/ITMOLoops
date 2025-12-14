@@ -6,103 +6,64 @@
 #include "instrument.h"
 #include "pattern.h"
 #include "process.h"
+#include "wav_writer.h"
 
-// Calculates the latest ending of a note -> it is buffer length
-uint32_t Song::FindInstrumentBufferLength(const std::string& name) {
-  uint32_t instrument_buffer_len = 0;
-  for (int i = 0; i < note_calls_.size(); ++i) {
-    Note& note = note_calls_[i];
-    const std::string& instrument_name = note.GetInstrumentName();
-    if (name == instrument_name) {
-      instrument_buffer_len =
-          std::max(instrument_buffer_len, note.GetStart() + note.GetDuration());
-    }
+float Note::GetPitch() const { return pitch_; }
+
+uint32_t Note::GetVelocity() const { return velocity_; }
+
+void Song::RenderSong(std::string music_name) {
+  ExpandMain();
+  SortNoteCalls();
+  uint64_t song_len = 0;
+  for (const auto& note : note_calls_) {
+    song_len =
+        std::max<uint64_t>(song_len, note.GetStart() + note.GetDuration());
   }
-  return instrument_buffer_len;
-}
 
-uint32_t Song::FindSongDuration() {
-  uint32_t ans = 0;
-  for (const auto& [name, inst_ptr] : instruments_) {
-    uint32_t temp = FindInstrumentBufferLength(name);
-    ans = std::max(ans, temp);
-  }
-  return ans;
-}
-
-void Song::RenderSong() {
-  // std::vector<float> Song
+  std::vector<float> song(song_len, 0.0f);
   for (const auto& [name, inst_ptr] : instruments_) {
     Instrument* inst = inst_ptr.get();
-    uint32_t buffer_length = FindInstrumentBufferLength(name);
-    std::vector<float> instrument_sounds(buffer_length);
-
-    for (int i = 0; i < note_calls_.size(); ++i) {
-      const std::string& instrument_name = note_calls_[i].GetInstrumentName();
-      if (name == instrument_name) {
-        // std::cout << name << '\n';
-        // inst.RenderSound();
+    std::vector<float> inst_buf(song_len, 0.0f);
+    for (const auto& note : note_calls_) {
+      if (note.GetInstrumentName() != name) {
+        continue;
       }
+      inst->PlaySound(inst_buf, note.GetStart(), note.GetPitch(),
+                      note.GetDuration(), note.GetVelocity());
+    }
+
+    for (int ei = 0; ei < inst->GetEffectsSize(); ++ei) {
+      Effect* eff = inst->GetEffect(ei);
+      eff->ChangeSound(inst_buf);
+    }
+
+    for (size_t i = 0; i < song.size(); ++i) {
+      song[i] += inst_buf[i];
     }
   }
+
+  WriteWavMono16(music_name, song);
 }
 
 uint32_t Note::GetDuration() const { return duration_samples_; }
 
-std::string& Note::GetInstrumentName() { return instrument_; }
+const std::string& Note::GetInstrumentName() const { return instrument_; }
 
 Song::Song() = default;
 
 void Song::SetBpm(uint16_t bpm) { bpm_ = bpm; }
 
-void Song::GetBpm() { std::cout << bpm_ << '\n'; }
 
 uint32_t Note::GetStart() const { return start_sample_; }
 
 int Song::GetInstrumentsSize() { return instruments_.size(); }
-
-void Song::GetInstrumentsInfo() {
-  int instruments_size = instruments_.size();
-  std::cout << "Bpm : " << bpm_ << '\n';
-
-  for (const auto& [name, inst_ptr] : instruments_) {
-    std::cout << "Instrument: " << name << '\n';
-
-    Instrument* inst = inst_ptr.get();
-    inst->GetFields();
-
-    int effects_size = inst->GetEffectsSize();
-    std::cout << "Effects:\n";
-
-    for (int j = 0; j < effects_size; ++j) {
-      Effect* eff = inst->GetEffect(j);
-      eff->GetFields();
-    }
-
-    std::cout << '\n';
-  }
-}
-
-void Song::GetPatternsSize() { std::cout << patterns_.size() << '\n'; }
-
-void Song::GetPatterns() {
-  for (const auto& [name, patterns_ptr] : patterns_) {
-    std::cout << "Pattern: " << name << " Resolution "
-              << patterns_ptr->GetResolution() << '\n';
-    for (int i = 0; i < patterns_ptr->GetEventsSize(); ++i) {
-      Event* now = patterns_ptr->GetEvent(i);
-      now->PrintFields();
-    }
-    std::cout << '\n';
-  }
-}
 
 const std::unordered_map<std::string, std::unique_ptr<Instrument>>&
 Song::GetInstruments() const {
   return instruments_;
 }
 
-void Song::GetDuration() { std::cout << song_duration_samples_ << '\n'; }
 
 void Song::AddInstrument(const std::string& name,
                          std::unique_ptr<Instrument> inst) {
@@ -114,9 +75,10 @@ void Song::AddPattern(const std::string& name,
   patterns_.emplace(name, std::move(pattern));
 }
 
-uint32_t Song::UnitToSample(uint32_t unit, uint32_t resolution) {
-  uint32_t sample = (unit * 60 * 44100) / (bpm_ * resolution);
-  return sample;
+uint64_t Song::UnitToSample(uint64_t unit, uint32_t resolution) {
+  uint64_t num = unit * 60 * 44100;
+  uint64_t den = bpm_ * resolution;
+  return static_cast<uint64_t>(num / den);
 }
 
 void Song::ExpandPattern(const std::string& pattern_name,
@@ -150,17 +112,6 @@ void Song::ExpandPattern(const std::string& pattern_name,
 void Song::ExpandMain() { ExpandPattern("main", 0); }
 
 void Song::SetDuration() { song_duration_samples_ = note_calls_[0].GetStart(); }
-
-void Song::PrintNoteCalls() {
-  for (int i = 0; i < note_calls_.size(); ++i) {
-    note_calls_[i].PrintNote();
-  }
-}
-
-void Note::PrintNote() {
-  std::cout << start_sample_ << " " << instrument_ << " " << pitch_ << " "
-            << duration_samples_ << " " << velocity_ << '\n';
-}
 
 void Song::SortNoteCalls() {
   std::sort(note_calls_.begin(), note_calls_.end(), cmp);

@@ -10,7 +10,6 @@ enum class EventKind { kPattern, kNote };
 class Event {
  public:
   virtual ~Event() = default;
-  virtual void PrintFields() = 0;
   virtual EventKind GetEventKind() = 0;
 
   void SetStart(uint32_t start);
@@ -26,8 +25,6 @@ class NoteEvent : public Event {
   void SetPitch(float pitch);
   void SetDuration(uint32_t duration);
   void SetVelocity(uint32_t velocity);
-
-  void PrintFields();
 
   const std::string& GetInstrumentName();
   float GetPitch();
@@ -47,8 +44,6 @@ class PatternEvent : public Event {
  public:
   void SetPatternName(std::string name);
 
-  void PrintFields();
-
   EventKind GetEventKind();
 
   std::string& GetPatternName();
@@ -64,9 +59,7 @@ class Pattern {
   void SetResolution(uint32_t);
 
   uint32_t GetResolution();
-
   int GetEventsSize();
-
   Event* GetEvent(int n);
 
  private:

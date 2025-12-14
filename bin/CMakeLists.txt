@@ -5,6 +5,7 @@ add_executable(itmoloops main.cpp
     ${PROJECT_SOURCE_DIR}/lib/song.cpp
     ${PROJECT_SOURCE_DIR}/lib/pattern.cpp
     ${PROJECT_SOURCE_DIR}/lib/parser.cpp
+    ${PROJECT_SOURCE_DIR}/lib/wav_writer.cpp
     ${PROJECT_SOURCE_DIR}/lib/process.cpp)
 
 

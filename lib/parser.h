@@ -8,7 +8,7 @@
 
 class Parser {
  public:
-  void Parse(Song& song, std::istream& in);
+  void Parse(Song& song, std::string& txt_path);
 
   std::unique_ptr<Instrument> ParseInstrument(std::istream& in,
                                               const std::string& header);
@@ -46,8 +46,6 @@ class Parser {
   std::unique_ptr<Pattern> ParsePattern(std::istream& in, std::string line);
 
   void ReadNotesFromFile();
-
-  void PrintNotes() const;
 
   uint16_t Read16tNumber(std::istream& in);
 

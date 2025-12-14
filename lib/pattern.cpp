@@ -23,17 +23,6 @@ float NoteEvent::GetPitch() { return pitch_; }
 uint32_t NoteEvent::GetDuration() { return duration_; }
 uint32_t NoteEvent::GetVelocity() { return velocity_; }
 
-void NoteEvent::PrintFields() {
-  std::cout << "Note Event : ";
-  std::cout << start_ << " " << instrument_name_ << " " << pitch_ << " "
-            << duration_ << velocity_ << '\n';
-}
-
-void PatternEvent::PrintFields() {
-  std::cout << "Pattern Event : ";
-  std::cout << start_ << " " << pattern_name_ << '\n';
-}
-
 int Pattern::GetEventsSize() { return events_.size(); }
 
 Event* Pattern::GetEvent(int n) { return events_[n].get(); }

@@ -10,6 +10,8 @@
 #include "pattern.h"
 #include "process.h"
 
+namespace fs = std::filesystem;
+
 struct Note {
  private:
   uint32_t start_sample_;
@@ -28,14 +30,12 @@ struct Note {
         duration_samples_(duration),
         velocity_(velocity) {}
 
-  void PrintNote();
-
   uint32_t GetStart() const;
+  float GetPitch() const;
+  uint32_t GetVelocity() const;
   uint32_t GetDuration() const;
-  std::string& GetInstrumentName();
+  const std::string& GetInstrumentName() const;
 };
-
-namespace fs = std::filesystem;
 
 class Song {
  public:
@@ -44,11 +44,10 @@ class Song {
   void AddInstrument(const std::string& name, std::unique_ptr<Instrument> inst);
   void AddPattern(const std::string& name, std::unique_ptr<Pattern> pattern);
   static bool cmp(const Note& lhs, const Note& rhs);
-  void ReadNotes();
   void ExpandMain();
   void ExpandPattern(const std::string&, uint32_t);
-  uint32_t UnitToSample(uint32_t unit, uint32_t resolution);
-  void PrintNoteCalls();
+  uint64_t UnitToSample(uint64_t unit, uint32_t resolution);
+
   void SortNoteCalls();
 
   void SetBpm(uint16_t);
@@ -57,17 +56,8 @@ class Song {
   const std::unordered_map<std::string, std::unique_ptr<Instrument>>&
   GetInstruments() const;
   int GetInstrumentsSize();
-  void GetInstrumentsInfo();
-  void GetPatternsSize();
-  void GetPatterns();
-  void GetDuration();
-  void GetNotes();
-  void GetBpm();
-  uint32_t FindInstrumentBufferLength(const std::string& name);
-  uint32_t FindSongDuration();
   void ExtractSamplersSamples();
-
-  void RenderSong();
+  void RenderSong(std::string music_name);
 
  private:
   uint16_t bpm_;
