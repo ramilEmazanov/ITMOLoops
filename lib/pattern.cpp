@@ -2,6 +2,8 @@
 
 #include <string>
 #include <memory>
+#include <cstdint>
+#include <utility>
 
 void Event::SetStart(uint32_t start) { start_ = start; }
 

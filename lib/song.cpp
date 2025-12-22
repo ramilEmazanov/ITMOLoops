@@ -4,6 +4,7 @@
 #include <vector>
 #include <string.h>
 #include <unordered_map>
+#include <string>
 #include <memory>
 #include <utility>
 
@@ -54,7 +55,6 @@ void Song::RenderSong(std::string music_name) {
   }
 
   WriteWavMono16(music_name, song);
-  return;
 }
 
 uint32_t Note::GetDuration() const { return duration_samples_; }
@@ -63,7 +63,6 @@ const std::string& Note::GetInstrumentName() const { return instrument_; }
 
 void Song::SetBpm(uint16_t bpm) {
   bpm_ = bpm; 
-  return;
 }
 
 uint32_t Note::GetStart() const { return start_sample_; }
@@ -117,22 +116,18 @@ void Song::ExpandPattern(const std::string& pattern_name,
                     pattern_start_samples + delta_start_samples);
     }
   }
-  return;
 }
 void Song::ExpandMain() { 
-  ExpandPattern("main", 0); 
-  return;
+  ExpandPattern("main", 0);
 }
 
 void Song::SetDuration() { 
   song_duration_samples_ = note_calls_[0].GetStart(); 
-  return; 
 }
 
 void Song::SortNoteCalls() {
   std::sort(note_calls_.begin(), note_calls_.end(), Cmp);
   SetDuration();
-  return;
 }
 
 bool Song::Cmp(const Note& lhs, const Note& rhs) {
