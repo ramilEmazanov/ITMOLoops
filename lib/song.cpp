@@ -5,8 +5,8 @@
 #include "effect.h"
 #include "instrument.h"
 #include "pattern.h"
-#include "process.h"
 #include "wav_writer.h"
+#include "song.h"
 
 float Note::GetPitch() const { return pitch_; }
 
@@ -15,11 +15,16 @@ uint32_t Note::GetVelocity() const { return velocity_; }
 void Song::RenderSong(std::string music_name) {
   ExpandMain();
   SortNoteCalls();
+  uint32_t max_release = 0;
   uint64_t song_len = 0;
   for (const auto& note : note_calls_) {
+    Instrument* temp = instruments_[note.GetInstrumentName()].get();
+    uint32_t release = temp->GetRelease();
+    max_release = std::max(release, max_release);
     song_len =
         std::max<uint64_t>(song_len, note.GetStart() + note.GetDuration());
   }
+  song_len += max_release;
 
   std::vector<float> song(song_len, 0.0f);
   for (const auto& [name, inst_ptr] : instruments_) {
@@ -50,10 +55,7 @@ uint32_t Note::GetDuration() const { return duration_samples_; }
 
 const std::string& Note::GetInstrumentName() const { return instrument_; }
 
-Song::Song() = default;
-
 void Song::SetBpm(uint16_t bpm) { bpm_ = bpm; }
-
 
 uint32_t Note::GetStart() const { return start_sample_; }
 
@@ -63,7 +65,6 @@ const std::unordered_map<std::string, std::unique_ptr<Instrument>>&
 Song::GetInstruments() const {
   return instruments_;
 }
-
 
 void Song::AddInstrument(const std::string& name,
                          std::unique_ptr<Instrument> inst) {

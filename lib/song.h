@@ -8,9 +8,6 @@
 #include "effect.h"
 #include "instrument.h"
 #include "pattern.h"
-#include "process.h"
-
-namespace fs = std::filesystem;
 
 struct Note {
  private:
@@ -39,8 +36,6 @@ struct Note {
 
 class Song {
  public:
-  Song();
-
   void AddInstrument(const std::string& name, std::unique_ptr<Instrument> inst);
   void AddPattern(const std::string& name, std::unique_ptr<Pattern> pattern);
   static bool cmp(const Note& lhs, const Note& rhs);

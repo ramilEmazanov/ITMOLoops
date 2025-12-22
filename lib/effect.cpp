@@ -1,9 +1,5 @@
 #include "effect.h"
 
-#include <iostream>
-#include <memory>
-#include <string>
-
 constexpr uint32_t kSampleRate = 44100;
 constexpr float kTwoPi = 6.28f;
 

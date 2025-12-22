@@ -1,6 +1,5 @@
 #include "pattern.h"
 
-#include <iostream>
 #include <string>
 
 void Event::SetStart(uint32_t start) { start_ = start; }

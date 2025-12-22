@@ -1,11 +1,7 @@
 #include "process.h"
 
-#include <cstdint>
-#include <fstream>
-#include <memory>
 #include <string>
 
-#include "instrument.h"
 #include "parser.h"
 #include "song.h"
 

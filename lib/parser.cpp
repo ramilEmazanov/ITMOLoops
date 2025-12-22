@@ -358,12 +358,29 @@ void Parser::ReadNotesFromFile() {
   }
 }
 
+#include <cstdint>
+#include <cstring>
+#include <istream>
+#include <vector>
+
 uint16_t Parser::Read16tNumber(std::istream& in) {
   uint16_t ans = 0;
   for (int i = 0; i < 2; ++i) {
     char reading = 0;
     in.get(reading);
     uint16_t temp = static_cast<uint8_t>(reading);
+    temp <<= (8 * i);
+    ans += temp;
+  }
+  return ans;
+}
+
+uint32_t Parser::Read32tNumber(std::istream& in) {
+  uint32_t ans = 0;
+  for (int i = 0; i < 4; ++i) {
+    char reading = 0;
+    in.get(reading);
+    uint32_t temp = static_cast<uint8_t>(reading);
     temp <<= (8 * i);
     ans += temp;
   }
@@ -381,13 +398,15 @@ float Parser::ExtractFloatSample(std::istream& in) {
 }
 
 void Parser::ExtractSamples(std::istream& in, std::vector<float>& samples) {
-  in.seekg(44, std::ios::beg);
-  while (true) {
-    float sample = ExtractFloatSample(in);
-    if (!in) {
-      break;
-    }
-    samples.push_back(sample);
+  samples.clear();
+
+  in.seekg(40, std::ios::beg);
+  uint32_t data_size = Read32tNumber(in);
+  uint32_t sample_count = data_size / 2;
+
+  for (uint32_t i = 0; i < sample_count; ++i) {
+    float s = ExtractFloatSample(in);
+    if (!in) break;
+    samples.push_back(s);
   }
-  return;
 }

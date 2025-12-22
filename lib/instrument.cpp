@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-#include <iostream>
-
 constexpr uint32_t kSampleRate = 44100;
 constexpr float kTwoPi = 6.28f;
 
@@ -42,7 +40,8 @@ void SineInstrument::PlaySound(std::vector<float>& out, uint32_t start,
     return;
   }
   uint32_t actual_duration =
-      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start);
+      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start) +
+      release_;
   for (uint32_t ith_sample = 0; ith_sample < actual_duration; ++ith_sample) {
     float t = static_cast<float>(start + ith_sample) /
               static_cast<float>(kSampleRate);
@@ -60,7 +59,8 @@ void SquareInstrument::PlaySound(std::vector<float>& out, uint32_t start,
     return;
   }
   uint32_t actual_duration =
-      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start);
+      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start) +
+      release_;
   float duty = duty_ / 100.0f;
   float phase = 0.0f;
   float step_per_sample = pitch / static_cast<float>(kSampleRate);
@@ -97,7 +97,8 @@ void TriangleInstrument::PlaySound(std::vector<float>& out, uint32_t start,
     return;
   }
   uint32_t actual_duration =
-      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start);
+      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start) +
+      release_;
   float phase = 0.0f;
   float step = pitch / static_cast<float>(kSampleRate);
   for (uint32_t ith_sample = 0; ith_sample < actual_duration; ++ith_sample) {
@@ -123,7 +124,8 @@ void SamplerInstrument::PlaySound(std::vector<float>& out, uint32_t start,
     return;
   }
   uint32_t actual_duration =
-      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start);
+      std::min<uint32_t>(duration, static_cast<uint32_t>(out.size()) - start) +
+      release_;
 
   float ratio = pitch / root_note_;
   float position = 0.0f;
@@ -162,29 +164,13 @@ void SamplerInstrument::PlaySound(std::vector<float>& out, uint32_t start,
 
 Effect* Instrument::GetEffect(int n) const { return effects_[n].get(); }
 
-Instrument::~Instrument() = default;
-
-SamplerInstrument::SamplerInstrument() = default;
-
-SamplerInstrument::~SamplerInstrument() = default;
-
-SquareInstrument::SquareInstrument() = default;
-
-SquareInstrument::~SquareInstrument() = default;
-
-SineInstrument::SineInstrument() = default;
-
-SineInstrument::~SineInstrument() = default;
-
-TriangleInstrument::TriangleInstrument() = default;
-
-TriangleInstrument::~TriangleInstrument() = default;
-
 const std::vector<std::unique_ptr<Effect>>& Instrument::GetEffects() {
   return effects_;
 }
 
 int Instrument::GetEffectsSize() const { return effects_.size(); }
+
+uint32_t Instrument::GetRelease() { return release_; }
 
 void Instrument::AddEffect(std::unique_ptr<Effect> eff) {
   effects_.push_back(std::move(eff));

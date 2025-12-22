@@ -16,7 +16,7 @@ class Instrument {
   virtual void PlaySound(std::vector<float>& out, uint32_t start,
                          float pitch_hz, uint32_t duration,
                          uint32_t velocity) = 0;
-  virtual ~Instrument() = 0;
+  virtual ~Instrument() = default;
   float NormalizeVelocity(uint32_t velocity);
   float AttackRelease(uint32_t current_sample, uint32_t duration_samples);
   void AddEffect(std::unique_ptr<Effect> eff);
@@ -24,6 +24,7 @@ class Instrument {
   void SetAttack(uint32_t attack);
   void SetRelease(uint32_t release);
 
+  uint32_t GetRelease();
   int GetEffectsSize() const;
   Effect* GetEffect(int n) const;
 
@@ -41,9 +42,6 @@ class SamplerInstrument : public Instrument {
                  uint32_t duration, uint32_t velocity) override;
 
   float LinearInterpolate(float a, float b, float t);
-
-  SamplerInstrument();
-  ~SamplerInstrument();
 
   void SetPath(fs::path sample_path);
   void SetRoot(float root_note);
@@ -68,9 +66,6 @@ class SquareInstrument : public Instrument {
   void PlaySound(std::vector<float>& out, uint32_t start, float pitch_hz,
                  uint32_t duration, uint32_t velocity) override;
 
-  SquareInstrument();
-  ~SquareInstrument();
-
   void SetDuty(uint32_t duty);
 
  private:
@@ -82,8 +77,6 @@ class SineInstrument : public Instrument {
   void PlaySound(std::vector<float>& out, uint32_t start, float pitch_hz,
                  uint32_t duration, uint32_t velocity) override;
 
-  SineInstrument();
-  ~SineInstrument();
 };
 
 class TriangleInstrument : public Instrument {
@@ -91,6 +84,4 @@ class TriangleInstrument : public Instrument {
   void PlaySound(std::vector<float>& out, uint32_t start, float pitch_hz,
                  uint32_t duration, uint32_t velocity) override;
   float TriangleValue(float phase);
-  TriangleInstrument();
-  ~TriangleInstrument();
 };
