@@ -2,8 +2,10 @@
 #include <cstdint>
 #include <cstdint>
 #include <vector>
+#include <string.h>
 #include <unordered_map>
 #include <memory>
+#include <utility>
 
 #include "effect.h"
 #include "instrument.h"
@@ -117,13 +119,20 @@ void Song::ExpandPattern(const std::string& pattern_name,
   }
   return;
 }
-void Song::ExpandMain() { ExpandPattern("main", 0); }
+void Song::ExpandMain() { 
+  ExpandPattern("main", 0); 
+  return;
+}
 
-void Song::SetDuration() { song_duration_samples_ = note_calls_[0].GetStart(); }
+void Song::SetDuration() { 
+  song_duration_samples_ = note_calls_[0].GetStart(); 
+  return; 
+}
 
 void Song::SortNoteCalls() {
   std::sort(note_calls_.begin(), note_calls_.end(), Cmp);
   SetDuration();
+  return;
 }
 
 bool Song::Cmp(const Note& lhs, const Note& rhs) {

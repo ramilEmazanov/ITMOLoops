@@ -5,6 +5,7 @@
 #include <vector>
 #include <filesystem>
 #include <memory>
+#include <algorithm>
 #include <cmath>
 
 constexpr uint32_t kSampleRate = 44100;

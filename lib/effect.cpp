@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <vector>
+#include <string.h>
 #include <cmath>
 
 #include "effect.h"
