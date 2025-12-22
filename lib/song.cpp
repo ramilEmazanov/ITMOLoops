@@ -1,6 +1,9 @@
 #include <algorithm>
 #include <cstdint>
+#include <cstdint>
 #include <vector>
+#include <unordered_map>
+#include <memory>
 
 #include "effect.h"
 #include "instrument.h"
@@ -49,13 +52,17 @@ void Song::RenderSong(std::string music_name) {
   }
 
   WriteWavMono16(music_name, song);
+  return;
 }
 
 uint32_t Note::GetDuration() const { return duration_samples_; }
 
 const std::string& Note::GetInstrumentName() const { return instrument_; }
 
-void Song::SetBpm(uint16_t bpm) { bpm_ = bpm; }
+void Song::SetBpm(uint16_t bpm) {
+  bpm_ = bpm; 
+  return;
+}
 
 uint32_t Note::GetStart() const { return start_sample_; }
 
@@ -115,10 +122,10 @@ void Song::ExpandMain() { ExpandPattern("main", 0); }
 void Song::SetDuration() { song_duration_samples_ = note_calls_[0].GetStart(); }
 
 void Song::SortNoteCalls() {
-  std::sort(note_calls_.begin(), note_calls_.end(), cmp);
+  std::sort(note_calls_.begin(), note_calls_.end(), Cmp);
   SetDuration();
 }
 
-bool Song::cmp(const Note& lhs, const Note& rhs) {
+bool Song::Cmp(const Note& lhs, const Note& rhs) {
   return lhs.GetStart() > rhs.GetStart();
 }

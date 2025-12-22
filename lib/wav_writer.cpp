@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <string>
 
 void WriteWavMono16(const std::string& path,
                     const std::vector<float>& samples) {

@@ -5,8 +5,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <memory>
 
 #include "song.h"
+#include "instrument.h"
+#include "effect.h"
+#include "pattern.h"
 
 constexpr uint32_t kSampleRate = 44100;
 

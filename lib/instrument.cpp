@@ -1,6 +1,11 @@
 #include "instrument.h"
+#include "effect.h"
 
-#include <math.h>
+#include <cstdint>
+#include <vector>
+#include <filesystem>
+#include <memory>
+#include <cmath>
 
 constexpr uint32_t kSampleRate = 44100;
 constexpr float kTwoPi = 6.28f;

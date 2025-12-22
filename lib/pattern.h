@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <memory>
 
 enum class EventKind { kPattern, kNote };
 

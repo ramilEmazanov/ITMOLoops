@@ -1,3 +1,7 @@
+#include <cstdint>
+#include <vector>
+#include <cmath>
+
 #include "effect.h"
 
 constexpr uint32_t kSampleRate = 44100;

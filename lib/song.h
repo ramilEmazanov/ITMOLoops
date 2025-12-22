@@ -38,7 +38,7 @@ class Song {
  public:
   void AddInstrument(const std::string& name, std::unique_ptr<Instrument> inst);
   void AddPattern(const std::string& name, std::unique_ptr<Pattern> pattern);
-  static bool cmp(const Note& lhs, const Note& rhs);
+  static bool Cmp(const Note& lhs, const Note& rhs);
   void ExpandMain();
   void ExpandPattern(const std::string&, uint32_t);
   uint64_t UnitToSample(uint64_t unit, uint32_t resolution);
